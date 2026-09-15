@@ -1,0 +1,131 @@
+<title>Последний рейс — макет инвентаря v5</title>
+<style>
+:root{--bg:#0F1114;--panel:#15181C;--slotA:#1A1D21;--slotB:#121417;--stroke:#2C3138;--div:#23272D;--text:#ECEBE7;--muted:#8D939A;--dim:#6D737A;--acc:#FF8A2B;--ok:#46A758;--bad:#E5484D;--money:#7BD88F;--common:#A1A7AD;--uncommon:#58C472;--rare:#4C8DFF;--epic:#B068FF;--legend:#FFB52E}
+*{box-sizing:border-box}
+body{margin:0;background:#050607;font-family:"Gotham","Montserrat","Segoe UI",system-ui,sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;padding:18px}
+.scene{width:1280px;height:760px;position:relative;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 30% 40%,#2b3a2f 0,#141a17 45%,#07080a 100%);transform-origin:top center}
+.scene:before{content:"";position:absolute;inset:0;background:rgba(7,8,10,.55)}
+.scene:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 180px 60px rgba(0,0,0,.85);pointer-events:none}
+.win{position:absolute;left:50px;top:40px;width:1180px;height:680px;background:var(--bg);border:1px solid var(--stroke);border-radius:10px;display:flex;flex-direction:column;z-index:2}
+.head{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--div)}
+.title{font-weight:900;font-size:26px;letter-spacing:1px}
+.sub{font-size:12px;color:var(--muted);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:6px;background:#1B1F24;border:1px solid var(--stroke);font-weight:700;font-size:14px}
+.body{flex:1;display:grid;grid-template-columns:260px 1fr 300px;gap:16px;padding:16px 22px}
+.col{background:var(--panel);border:1px solid var(--div);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.h{font-weight:900;font-size:13px;letter-spacing:1.5px;color:var(--muted);display:flex;justify-content:space-between}
+.h b{color:var(--text)}
+.slot{position:relative;border-radius:6px;background:linear-gradient(#1A1D21,#121417);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center}
+.slot svg{width:62%;height:62%}
+.slot .n{position:absolute;right:6px;bottom:3px;font-weight:800;font-size:14px;text-shadow:0 0 3px #000,0 0 2px #000}
+.slot .k{position:absolute;left:5px;top:3px;font-size:11px;color:var(--dim);font-weight:700}
+.slot .lv{position:absolute;right:4px;top:4px;font-size:10px;font-weight:800;background:#2a2f36;border-radius:4px;padding:1px 4px}
+.slot .am{position:absolute;left:5px;bottom:3px;font-size:10px;color:var(--muted);font-weight:700}
+.slot.r:after{content:"";position:absolute;left:6px;right:6px;bottom:0;height:3px;border-radius:2px;background:var(--rc)}
+.slot.r{border-color:color-mix(in srgb,var(--rc) 45%,var(--stroke))}
+.slot.sel{border:2px solid var(--acc)}
+.slot.hands:before{content:"";position:absolute;left:0;top:0;border-top:14px solid var(--acc);border-right:14px solid transparent;border-top-left-radius:5px}
+.slot.hover{border-color:rgba(255,138,43,.6);transform:scale(1.03)}
+.grid{display:grid;grid-template-columns:repeat(6,84px);grid-auto-rows:84px;gap:8px;justify-content:center}
+.bar{display:grid;grid-template-columns:repeat(10,52px);grid-auto-rows:52px;gap:6px;justify-content:center}
+.vital{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.vital small{display:block;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px}
+.chip{font-size:11px;font-weight:700;padding:4px 8px;border-radius:5px;background:#1d2227;border:1px solid var(--stroke);color:#cfd3d6}
+.btn{height:36px;border-radius:6px;border:1px solid var(--stroke);background:#1B1F24;color:var(--text);font-weight:800;font-size:12px;letter-spacing:1px;display:flex;align-items:center;justify-content:center}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#1b0f04}
+.row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--div)}
+.row span:first-child{color:var(--muted)}
+.foot{height:34px;border-top:1px solid var(--div);display:flex;align-items:center;justify-content:center;gap:22px;font-size:12px;color:var(--muted)}
+.foot b{color:var(--text);font-weight:800}
+.hud{width:1280px;height:170px;position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(#3a4a3c,#1d2520)}
+.hudv{position:absolute;left:24px;bottom:22px;display:flex;gap:12px}
+.hudv .vital{background:rgba(10,12,14,.55);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 14px 8px 10px}
+.hudbar{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;display:grid;grid-template-columns:repeat(10,58px);gap:6px}
+.hudbar .slot{height:58px;background:rgba(14,16,19,.72)}
+.cap{color:#8d939a;font-size:12px;width:1280px}
+</style>
+
+<div class="cap">Макет-ориентир окна Tab (1280×760) и HUD. Иконки в игре — 3D (ViewportFrame), здесь — силуэты.</div>
+<div class="scene">
+  <div class="win">
+    <div class="head">
+      <div><div class="title">ИНВЕНТАРЬ</div><div class="sub">Рюкзак 12/18 · В руках 7/10</div></div>
+      <div style="display:flex;gap:10px">
+        <span class="pill" style="color:var(--money)">$ 240</span>
+        <span class="pill">✕ <span style="color:var(--muted);font-weight:600">Tab</span></span>
+      </div>
+    </div>
+    <div class="body">
+      <div class="col">
+        <div class="h"><span>ВЫЖИВШИЙ</span></div>
+        <div style="height:250px;border-radius:6px;background:radial-gradient(ellipse at 50% 85%,#2a3036 0,#15181c 70%);display:flex;align-items:flex-end;justify-content:center">
+          <svg viewBox="0 0 120 220" width="120" height="220"><g fill="#3b4148"><circle cx="60" cy="34" r="20"/><rect x="36" y="58" width="48" height="70" rx="8"/><rect x="20" y="62" width="14" height="60" rx="6"/><rect x="86" y="62" width="14" height="60" rx="6"/><rect x="40" y="128" width="17" height="80" rx="6"/><rect x="63" y="128" width="17" height="80" rx="6"/></g><rect x="36" y="58" width="48" height="36" rx="8" fill="#5a4a3a"/></svg>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:800">Плотник</span><span class="chip" style="color:var(--acc)">УР. 3</span></div>
+        <div class="vital"><svg width="36" height="34" viewBox="0 0 36 34"><defs><clipPath id="hc"><rect x="0" y="5" width="36" height="29"/></clipPath></defs><path d="M18 32 3 17A8.5 8.5 0 0 1 18 6a8.5 8.5 0 0 1 15 11z" fill="#3a1d1f"/><path clip-path="url(#hc)" d="M18 32 3 17A8.5 8.5 0 0 1 18 6a8.5 8.5 0 0 1 15 11z" fill="#E5484D"/></svg><div>86<small>ЗДОРОВЬЕ</small></div></div>
+        <div class="vital"><svg width="36" height="34" viewBox="0 0 36 34"><defs><clipPath id="fc"><rect x="0" y="12" width="36" height="22"/></clipPath></defs><g transform="rotate(-35 18 17)"><ellipse cx="14" cy="14" rx="11" ry="9" fill="#3a2a17"/><rect x="21" y="12" width="12" height="4" rx="2" fill="#5a5048"/><circle cx="33" cy="12" r="2.6" fill="#5a5048"/><circle cx="33" cy="17" r="2.6" fill="#5a5048"/></g><g clip-path="url(#fc)" transform="rotate(-35 18 17)"><ellipse cx="14" cy="14" rx="11" ry="9" fill="#D9913F"/><rect x="21" y="12" width="12" height="4" rx="2" fill="#EDE3D4"/><circle cx="33" cy="12" r="2.6" fill="#EDE3D4"/><circle cx="33" cy="17" r="2.6" fill="#EDE3D4"/></g></svg><div>64<small>СЫТОСТЬ</small></div></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip">☕ Кофеин 1:12</span><span class="chip" style="color:#9ecbff">Выспался</span></div>
+        <div style="margin-top:auto;font-size:12px;color:var(--muted);display:flex;justify-content:space-between"><span>Убито <b style="color:var(--text)">24</b></span><span>Путь <b style="color:var(--text)">12,4 км</b></span></div>
+      </div>
+
+      <div class="col" style="align-items:center">
+        <div class="h" style="width:520px"><span>РЮКЗАК</span><b>12/18</b></div>
+        <div class="grid">
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="8" y="14" width="24" height="12" rx="3" fill="#e9e1d2"/><rect x="17" y="14" width="6" height="12" fill="#d24b4b"/></svg><span class="n">3</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="10" y="10" width="20" height="22" rx="3" fill="#9aa4ad"/><rect x="10" y="15" width="20" height="10" fill="#c0392b"/></svg><span class="n">2</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><path d="M11 8h18l-2 26H13z" fill="#f2b93b"/><rect x="11" y="17" width="18" height="7" fill="#d35400"/></svg><span class="n">4</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="15" y="6" width="10" height="6" rx="2" fill="#5dade2"/><rect x="12" y="11" width="16" height="24" rx="5" fill="#85c1e9" opacity=".9"/></svg><span class="n">2</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><path d="M9 26l7-12 9 3 6 10-10 5z" fill="#2b2b2b"/><path d="M16 14l9 3-4 5z" fill="#444"/></svg><span class="n">6</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="6" y="12" width="28" height="5" rx="1" fill="#a47148"/><rect x="6" y="19" width="28" height="5" rx="1" fill="#8b5e3c"/><rect x="6" y="26" width="28" height="5" rx="1" fill="#a47148"/></svg><span class="n">12</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><path d="M8 28l8-16 6 5 10-4-4 17z" fill="#7f8c8d"/><circle cx="20" cy="22" r="3" fill="#95a5a6"/></svg><span class="n">9</span></div>
+          <div class="slot r" style="--rc:var(--uncommon)"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="11" fill="none" stroke="#c8a165" stroke-width="4"/><circle cx="20" cy="20" r="5" fill="none" stroke="#b08850" stroke-width="3"/></svg><span class="n">1</span></div>
+          <div class="slot r" style="--rc:var(--uncommon)"><svg viewBox="0 0 40 40"><rect x="10" y="12" width="20" height="16" rx="2" fill="#2c3e50"/><rect x="30" y="17" width="3" height="6" fill="#95a5a6"/><rect x="12" y="14" width="7" height="12" fill="#f1c40f"/></svg><span class="n">2</span></div>
+          <div class="slot r hover" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><g stroke="#c9b28a" stroke-width="2.4"><path d="M8 32 32 8"/><path d="M12 32 34 10"/></g><path d="M32 8l-5 1 4 4z M34 10l-5 1 4 4z" fill="#ddd"/></svg><span class="n">20</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="9" y="12" width="22" height="18" rx="2" fill="#6e5a2e"/><g fill="#d4ac4a"><rect x="12" y="8" width="3" height="8" rx="1"/><rect x="17" y="8" width="3" height="8" rx="1"/><rect x="22" y="8" width="3" height="8" rx="1"/></g></svg><span class="n">36</span></div>
+          <div class="slot r" style="--rc:var(--common)"><svg viewBox="0 0 40 40"><rect x="10" y="9" width="20" height="25" rx="3" fill="#b03a2e"/><rect x="21" y="5" width="7" height="6" rx="1" fill="#555"/></svg><span class="n">1</span></div>
+          <div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div><div class="slot"></div>
+        </div>
+        <div class="h" style="width:520px;margin-top:6px"><span>В РУКАХ</span><b>7/10</b></div>
+        <div class="bar">
+          <div class="slot r hands" style="--rc:var(--common)"><span class="k">1</span><svg viewBox="0 0 40 40"><path d="M9 31 27 13" stroke="#8b6a45" stroke-width="3"/><path d="M26 8l8 8-5 5-8-8z" fill="#8e979e"/><rect x="5" y="30" width="7" height="3" rx="1" transform="rotate(-45 8 31)" fill="#5b4430"/></svg></div>
+          <div class="slot r sel" style="--rc:var(--uncommon)"><span class="k">2</span><svg viewBox="0 0 40 40"><path d="M12 6q16 14 0 28" fill="none" stroke="#8b5e3c" stroke-width="3"/><path d="M12 6v28" stroke="#ddd" stroke-width="1"/></svg></div>
+          <div class="slot r" style="--rc:var(--common)"><span class="k">3</span><svg viewBox="0 0 40 40"><path d="M8 14h24v6H18l-2 12h-6l2-12H8z" fill="#3d4349"/></svg><span class="am">12/12</span></div>
+          <div class="slot r" style="--rc:var(--uncommon)"><span class="k">4</span><svg viewBox="0 0 40 40"><rect x="14" y="12" width="12" height="22" rx="4" fill="#5d8a4a"/><path d="M18 5h4v8h-4z" fill="#e8d9b5"/><path d="M20 2q3 3 0 5" stroke="#ff8a2b" stroke-width="2" fill="none"/></svg><span class="n">2</span></div>
+          <div class="slot r" style="--rc:var(--rare)"><span class="k">5</span><svg viewBox="0 0 40 40"><rect x="8" y="11" width="24" height="18" rx="3" fill="#ecf0f1"/><path d="M18 14h4v4h4v4h-4v4h-4v-4h-4v-4h4z" fill="#e74c3c"/></svg></div>
+          <div class="slot r" style="--rc:var(--common)"><span class="k">6</span><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" fill="#1c1c1c"/><circle cx="20" cy="20" r="6" fill="#9aa0a6"/></svg></div>
+          <div class="slot r" style="--rc:var(--common)"><span class="k">7</span><svg viewBox="0 0 40 40"><rect x="8" y="8" width="24" height="24" fill="#8b5e3c"/><path d="M8 16h24M8 24h24" stroke="#5b3d25" stroke-width="1.5"/></svg></div>
+          <div class="slot"><span class="k">8</span></div><div class="slot"><span class="k">9</span></div><div class="slot"><span class="k">0</span></div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="h"><span>ПРЕДМЕТ</span></div>
+        <div style="height:190px;border-radius:6px;background:radial-gradient(ellipse at 50% 60%,rgba(88,196,114,.22) 0,#121417 70%);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 40 40" width="150" height="150"><path d="M12 4q20 16 0 32" fill="none" stroke="#8b5e3c" stroke-width="2.6"/><path d="M12 4v32" stroke="#ddd" stroke-width=".7"/><path d="M12 20h22" stroke="#c9b28a" stroke-width="1.4"/><path d="M34 20l-4-2v4z" fill="#ddd"/></svg></div>
+        <div><div style="font-weight:800;font-size:22px">Лук</div><div style="display:flex;gap:8px;align-items:center;margin-top:4px"><span class="chip" style="color:var(--uncommon);border-color:rgba(88,196,114,.4)">НЕОБЫЧНЫЙ</span><span style="font-size:12px;color:var(--muted)">Оружие · дальний бой</span></div></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.45">Зажмите ЛКМ, чтобы натянуть тетиву. Полное натяжение — до ×5 урона. Стрелы можно подобрать.</div>
+        <div><div class="row"><span>Урон</span><b>16–90</b></div><div class="row"><span>Натяжение</span><b>0,85 с</b></div><div class="row"><span>Стрелы</span><b>20</b></div><div class="row" style="border:0"><span>Продажа</span><b style="color:var(--money)">$ 60</b></div></div>
+        <div style="margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="btn pri" style="grid-column:span 2">ИСПОЛЬЗОВАТЬ</div>
+          <div class="btn">В РЮКЗАК</div><div class="btn">РАЗДЕЛИТЬ</div>
+          <div class="btn">ПЕРЕДАТЬ</div><div class="btn" style="color:var(--bad)">ВЫБРОСИТЬ</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span><b>ЛКМ</b> выбрать</span><span><b>Перетащить</b> переместить</span><span><b>ПКМ</b> в рюкзак / в руки</span><span><b>Двойной клик</b> использовать</span><span><b>Q</b> выбросить</span></div>
+  </div>
+</div>
+
+<div class="cap">HUD в заезде: сердечко и окорочок слева внизу, хотбар по центру.</div>
+<div class="hud">
+  <div class="hudv">
+    <div class="vital"><svg width="34" height="32" viewBox="0 0 36 34"><path d="M18 32 3 17A8.5 8.5 0 0 1 18 6a8.5 8.5 0 0 1 15 11z" fill="#E5484D"/></svg>86</div>
+    <div class="vital"><svg width="34" height="32" viewBox="0 0 36 34"><g transform="rotate(-35 18 17)"><ellipse cx="14" cy="14" rx="11" ry="9" fill="#D9913F"/><rect x="21" y="12" width="12" height="4" rx="2" fill="#EDE3D4"/><circle cx="33" cy="12" r="2.6" fill="#EDE3D4"/><circle cx="33" cy="17" r="2.6" fill="#EDE3D4"/></g></svg>64</div>
+  </div>
+  <div class="hudbar">
+    <div class="slot hands sel"><span class="k">1</span></div><div class="slot"><span class="k">2</span></div><div class="slot"><span class="k">3</span></div><div class="slot"><span class="k">4</span></div><div class="slot"><span class="k">5</span></div><div class="slot"><span class="k">6</span></div><div class="slot"><span class="k">7</span></div><div class="slot"><span class="k">8</span></div><div class="slot"><span class="k">9</span></div><div class="slot"><span class="k">0</span></div>
+  </div>
+</div>
+<script>
+function fit(){var w=Math.min(1,(window.innerWidth-36)/1280);document.querySelectorAll('.scene,.hud,.cap').forEach(function(e){e.style.zoom=w})}
+window.addEventListener('resize',fit);fit();
+</script>
